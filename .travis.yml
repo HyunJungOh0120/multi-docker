@@ -4,13 +4,20 @@ services:
   - docker
 
 before_install:
-  - docker build -t hyunjungoh/react-test -f ./client/Dockerfile.dev ./client
+  - docker build -t hjolauren/react-test -f ./client/Dockerfile.dev ./client
 
 script:
-  - docker run -e CI=true hyunjungoh/react-test npm test -- --coverage
+  - docker run -e CI=true hjolauren/react-test npm test -- --coverage
 
 after_success:
-  - docker build -t hyunjungoh/multi-client ./client
-  - docker build -t hyunjungoh/multi-nginx ./nginx
-  - docker build -t hyunjungoh/multi-server ./server
-  - docker build -t hyunjungoh/multi-worker ./worker
+  - docker build -t hjolauren/multi-client ./client
+  - docker build -t hjolauren/multi-nginx ./nginx
+  - docker build -t hjolauren/multi-server ./server
+  - docker build -t hjolauren/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push hjolauren/multi-client
+  - docker push hjolauren/multi-nginx
+  - docker push hjolauren/multi-server
+  - docker push hjolauren/multi-worker
